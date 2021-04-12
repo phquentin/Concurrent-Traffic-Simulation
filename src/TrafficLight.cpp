@@ -19,7 +19,7 @@ T MessageQueue<T>::receive()
     T msg = std::move(_queue.back());
     _queue.pop_back();
 
-    return msg; // will not be copied due to return value optimization (RVO) in C++
+    return msg; 
 }
 
 
@@ -29,13 +29,12 @@ void MessageQueue<T>::send(T &&msg)
     // FP.4a : The method send should use the mechanisms std::lock_guard<std::mutex> 
     // as well as _condition.notify_one() to add a new message to the queue and afterwards send a notification.
 
-    // perform vector modification under the lock
+    // perform deque modification under the lock
     std::lock_guard<std::mutex> uLock(_mutex);
 
-    // add vector to queue
-    std::cout << " Message " << msg << " has been sent to the queue" << std::endl;
+    // add msg to queue
     _queue.push_back(std::move(msg));
-    _condition.notify_one(); // notify client after pushing new msg into queue 
+    _condition.notify_one(); // notify after pushing new msg into queue 
 }
 
 
